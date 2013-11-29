@@ -1,10 +1,13 @@
 from django.conf.urls import patterns, include, url
+from django.views.generic import TemplateView
+from views import get_bids, get_asks
 
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
 
 urlpatterns = patterns('',
+	(r"^$", TemplateView.as_view(template_name="static/index.html")),
     # Examples:
     # url(r'^$', 'btcconverter.views.home', name='home'),
     # url(r'^btcconverter/', include('btcconverter.foo.urls')),

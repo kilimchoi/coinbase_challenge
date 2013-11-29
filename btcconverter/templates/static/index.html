@@ -1,8 +1,102 @@
 <!DOCTYPE html> 
 <html>
-    
+    <head>
+    	<style>
+    		.align-right { 
+    			text-align: right;
+    		}
+
+    		.table { 
+    			margin-left: 120px;
+    		}
+    	</style>
+    	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    	<script>
+			var askArr = {{ asks }}
+			console.log(askArr);
+			var bidsArr = {{ bids }}
+			function getTheLowestAsks() { 
+				alert("enters");
+				console.log("enters");
+				var quantity = $("#quantity").value();
+				var subtotal = 0;
+				var lastIndex = 0;
+				var quantityTotal = 0;
+				for (var i = 0; i < askArr.length; i++) {
+					while (quantity != 0) {
+						if (i == askArr.length) 
+							break;
+						quantityTotal += askArr[i][1];
+						quantity -= askArr[i][1];
+						subtotal += askArr[i][0] * askArr[i][1];
+						lastIndex = i;
+					}
+				}
+				if (quantity < 0) {
+					quantityTotal -= askArr[i][1];
+					quantity += askArr[lastIndex][1];
+					subtotal -= askArr[lastIndex][0] * askArr[lastIndex][1];
+					subtotal += askArr[lastIndex][0] * quantity;
+					quantityTotal += quantity;
+				} 
+				if (quantity > 0) {
+					$("#error_message").append("Invalid quantity")
+				}
+				var total = subtotal/quantityTotal;
+				$("#subtotal").append(total);
+			}
+
+			function getTheHighestBids() { 
+				var quantity = $("#quantity").value();
+				var subtotal = 0;
+				var lastIndex = 0;
+				var quantityTotal = 0;
+				for (var i = 0; i < bidsArr.length; i++) {
+					while (quantity > 0) {
+						if (i == askArr.length) 
+							break;
+						quantityTotal += askArr[i][1];
+						quantity -= askArr[i][1];
+						subtotal += askArr[i][0] * askArr[i][1];
+						lastIndex = i;
+					}
+				}
+				if (quantity < 0) {
+					quantityTotal -= askArr[i][1];
+					quantity += askArr[lastIndex][1];
+					subtotal -= askArr[lastIndex][0] * askArr[lastIndex][1];
+					subtotal += askArr[lastIndex][0] * quantity;
+					quantityTotal += quantity;
+				}
+				if (quantity > 0) {
+					alert("Invalid quantity")
+				}
+				
+
+			}
+	</script>
+   	</head>
 	<body>
-		Hello World
+		<nav>
+			<a href="">Buy</a>
+			<a href="">Sell</a>
+		</nav>
+		<label>Quantity:</label> <input type="text" placeholder="10" size="30" id="quantity" oncomplete="getTheLowestAsks()"><label>BTC</label>
+		<table class="table">
+			<tr>
+				<td class="align-right">Subtotal</td>
+				<td class="align-right" id="subtotal"></td>
+			</tr>
+			<tr>
+				<td class="align-right">Commission</td>
+				<td class="align-right" id="commission">1%</td>
+			</tr>
+			<tr>
+				<td class="align-right">Total</td>
+				<td class="align-right" id="commission">$101</td>
+			</tr>
+
+		</table>
 	</body>
 
 </html>

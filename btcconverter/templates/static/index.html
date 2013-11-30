@@ -1,111 +1,159 @@
-<!DOCTYPE html> 
-<html>
-    <head>
-    	<style>
-    		.align-right { 
-    			text-align: right;
-    		}
+<!DOCTYPE html>
+<html lang="en">
 
-    		.table { 
-    			margin-left: 120px;
-    		}
-    	</style>
-    	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <head>
+        <meta charset="utf-8" />
+        
+        <link href="https://fonts.googleapis.com/css?family=Limelight|Flamenco|Federo|Yesteryear|Josefin Sans|Spinnaker|Sansita One|Handlee|Droid Sans|Oswald:400,300,700" media="screen" rel="stylesheet" type="text/css" />
+        
+        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap.css" />
+
+        <link rel="stylesheet" type="text/css" media="screen" href="{{ STATIC_URL }}css/index.css" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+       
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     	<script>
-			/**var askArr = "{{ asks }}"
-			console.log(askArr);
-			var bidsArr = "{{ bids }}"
-			function getTheLowestAsks() { 
-				console.log("enters");
-				var quantity = $("#quantity").value();
-				var subtotal = 0;
-				var lastIndex = 0;
-				var quantityTotal = 0;
-				for (var i = 0; i < askArr.length; i++) {
-					while (quantity != 0) {
-						if (i == askArr.length) 
-							break;
-						quantityTotal += askArr[i][1];
-						quantity -= askArr[i][1];
-						subtotal += askArr[i][0] * askArr[i][1];
-						lastIndex = i;
-					}
+			var res = "{{ json_response }}"
+			res = JSON.parse(res.replace(/&quot;/g,'"'));
+
+			function clickHandler() { 
+				$("#subtotal").html("");
+				$("#commission").html("");
+				$("#total").html("");
+				if ($("input[id='buy']:checked").val()) {
+					getTheLowestAsks();
+				} else if ($("input[id='sell']:checked").val()){ 
+					getTheHighestBids();
+				} else {
+					alert("check your options");
 				}
-				if (quantity < 0) {
-					quantityTotal -= askArr[i][1];
-					quantity += askArr[lastIndex][1];
-					subtotal -= askArr[lastIndex][0] * askArr[lastIndex][1];
-					subtotal += askArr[lastIndex][0] * quantity;
-					quantityTotal += quantity;
-				} 
-				if (quantity > 0) {
-					$("#error_message").append("Invalid quantity")
-				}
-				var total = subtotal/quantityTotal;
-				$("#subtotal").append(total);
 			}
 
-			function getTheHighestBids() { 
-				var quantity = $("#quantity").value();
+			function getTheLowestAsks() { 
+				var quantity = $("#quantity").val();
+				var quantityOld = quantity;
 				var subtotal = 0;
 				var lastIndex = 0;
 				var quantityTotal = 0;
-				for (var i = 0; i < bidsArr.length; i++) {
+				var askArr = res['asks'];
+				for (var i = 0; i < askArr.length; i++) {
 					while (quantity > 0) {
 						if (i == askArr.length) 
 							break;
-						quantityTotal += askArr[i][1];
-						quantity -= askArr[i][1];
-						subtotal += askArr[i][0] * askArr[i][1];
+	
+						quantityTotal += parseFloat(askArr[i][1]) ;
+						quantity -= parseFloat(askArr[i][1]) ;
+						subtotal += parseFloat(askArr[i][0])  * parseFloat(askArr[i][1]) ;
 						lastIndex = i;
 					}
 				}
 				if (quantity < 0) {
-					quantityTotal -= askArr[i][1];
-					quantity += askArr[lastIndex][1];
-					subtotal -= askArr[lastIndex][0] * askArr[lastIndex][1];
-					subtotal += askArr[lastIndex][0] * quantity;
+					quantityTotal -= parseFloat(askArr[lastIndex][1]);
+					quantity += parseFloat(askArr[lastIndex][1]);
+					subtotal -= parseFloat(askArr[lastIndex][0]) * parseFloat(askArr[lastIndex][1]);
+					subtotal += parseFloat(askArr[lastIndex][0]) * quantity;
 					quantityTotal += quantity;
-				}
-				if (quantity > 0) {
-					alert("Invalid quantity")
-				}
+				} 
 				
-
+				console.log("quantityOld is ", quantityOld);
+				var total = subtotal/quantityTotal;
+				$("#subtotal").append(total * quantityOld);
+				getComission();
 			}
 
-			function httpGet() {
-				var xmlHttp = null;
-				var url = "http://www.bitstamp.net/api/order_book";
-				xmlHttp = new XMLHttpRequest();
-				xmlHttp.open("GET", url, false);
-				console.log(xmlHttp.responseText);
-			}**/
+			function getTheHighestBids() { 
+				var quantity = $("#quantity").val();
+				var subtotal = 0;
+				var lastIndex = 0;
+				var quantityTotal = 0;
+				var bidsArr = res['bids'];
+				for (var i = 0; i < bidsArr.length; i++) {
+					while (quantity > 0) {
+						if (i == bidsArr.length) 
+							break;
 
-	</script>
-	<script>
-			  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-			  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-			  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-			  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+						quantityTotal += parseFloat(bidsArr[i][1]) ;
+						quantity -= parseFloat(bidsArr[i][1]) ;
+						subtotal += parseFloat(bidsArr[i][0])  * parseFloat(bidsArr[i][1]) ;
+						lastIndex = i;
+					}
+				}
+				if (quantity < 0) {
+					quantityTotal -= parseFloat(bidsArr[lastIndex][1]);
+					quantity += parseFloat(bidsArr[lastIndex][1]);
+					subtotal -= parseFloat(bidsArr[lastIndex][0]) * parseFloat(bidsArr[lastIndex][1]);
+					subtotal += parseFloat(bidsArr[lastIndex][0]) * quantity;
+					quantityTotal += quantity;
+				}
+				
+				var total = subtotal/quantityTotal;
+				$("#subtotal").append(total);
+				getComission();
 
-			  ga('create', 'UA-43691719-2', 'btc-converter.herokuapp.com');
-			  ga('send', 'pageview');
+			}
+			function getComission() { 
+				var subtotal = $("#subtotal").html();
+				$("#commission").append(subtotal * (1/100));
+				getTotal();
+			}
 
-	</script>
-   	</head>
-	<body>
-		<nav>
-			<a href="/buy">Buy</a>
-			<a href="/sell">Sell</a>
-		</nav>
-		<form action="converted" method="post">
-			{% csrf_token %}
-			<label>Quantity:</label> <input type="text" placeholder="10" size="30" id="quantity"><label>BTC</label>
-			<br />
-			<input type="submit" value="Convert">
-		</form>
-	</body>
+			function getTotal() {
+				var commission = $("#commission").html();
+				var subtotal = $("#subtotal").html();
+				var total = parseFloat(commission) + parseFloat(subtotal);
+				$("#total").append('$' + total);
+			}
+		</script>
+        <title></title>
+    
+    </head>
+     
+  <body style ="background-color: #dbe6ff;">
+    <div id="page-wrapper">
+      <div class="page-header">
+        <h1>
+        	BTC converter
+          <br>
+        </h1>
+      </div>
+      <h1 class="dom-heading dom-heading-1">Enter the amount of bitcoins and see how much they cost in dollars when you buy or sell them.&nbsp;</h1>
+      <div class="div-1">
+         <div>
+          <table>
+				<tr>
+					<td>
+						<label>Subtotal: </label><div id="subtotal"></div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Commission: </label><div id="commission"></div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label>Total: </label><div id="total"></div>
+					</td>
+				</tr>
+			</table>
+		
+        </div>
+      </div>
+      <div class="div-2">
+        <div>
 
-</html>
+				<label>Quantity:</label> <input type="text" placeholder="10" size="30" id="quantity"><label id="btc">BTC</label>
+				<br />
+				<label id="options">Options:</label>
+				<input type="radio" id="buy" name="options" value="Buy"><label>Buy</label>
+				<input type="radio" id="sell" name="options" value="sell"><label>Sell</label>
+				<input type="submit" class="btn btn-2" value="Convert" onclick="clickHandler()">
+			
+        </div>
+      </div>
+      <span class="dom-heading dom-heading-2">=></span>
+    </div>
+  </body>
+
+</html
 

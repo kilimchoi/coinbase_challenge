@@ -7,10 +7,8 @@ from django.views.generic import TemplateView
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-	(r"^$", TemplateView.as_view(template_name="static/index.html")),
-	(r"^buy$", TemplateView.as_view(template_name="static/index.html")),
-	(r"^sell$", TemplateView.as_view(template_name="static/index.html")),
-	(r"^converted$", 'btcconverter.views.converted'),
+	(r"^$", 'btcconverter.views.index'),
+    (r"^index$", 'btcconverter.views.index'),
     # Examples:
     # url(r'^$', 'btcconverter.views.home', name='home'),
     # url(r'^btcconverter/', include('btcconverter.foo.urls')),
